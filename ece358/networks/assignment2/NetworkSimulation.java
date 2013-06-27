@@ -1,3 +1,5 @@
+package ece358.networks.assignment2;
+
 import java.util.Random;
 import java.lang.Math;
 import java.util.ArrayList;
