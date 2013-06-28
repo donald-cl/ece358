@@ -100,20 +100,18 @@ public class DiscreteEventSimulator {
  			int persistanceParam = Integer.parseInt(args[4]);
 
  			int transmitTime = (int) ((pktLength * 8) / (lanSpeed * TICK_DURATION));
-
- 			System.out.println("yay");
  			
  			DiscreteEventSimulator des = new DiscreteEventSimulator();
- 			
  			ArrayList<Node> nodes = new ArrayList<Node>();
  			HashSet<Node> collisionsDetected = new HashSet<Node>();
+ 			
  			for (int i = 0; i < compNum; i++) {
  				Node n = des.new Node();
  				n.id = i;
+ 				n.generateNextPacketArrival(pktArrivalRate, 0);		
  				nodes.add(n);
  			}
  			
- 			Random rand = new Random();
  			Node transmitter = null;
  			
  			for (int currentTick = 0; currentTick < MAX_TICKS; currentTick++) {
@@ -121,19 +119,20 @@ public class DiscreteEventSimulator {
  				if (transmitter != null && transmitter.transmissionRemaining > 0) {
  					transmitter.transmissionRemaining -= 1;
  				}
- 				else if (transmitter != null & transmitter.transmissionRemaining == 0) {
+ 				else if (transmitter != null & transmitter.transmissionRemaining == 0) {	
+ 	 				for (Node n : nodes) {
+ 	 					if (n.id == transmitter.id) {
+ 	 						n.generateNextPacketArrival(pktArrivalRate, currentTick);
+ 	 					}
+ 	 				}
  					transmitter = null;
  					isMediumBusy = false;
  				}
- 				
  				
  				if (!isMediumBusy) { //nobody else is using the medium, yay :)
 	 				collisionsDetected.clear();
 	 				for (int j = 0; j < nodes.size(); j++) {
 	 					Node currentNode = nodes.get(j);
-	 					if (currentNode.pktGenerationTime == 0) {
-	 						currentNode.generateNextPacketArrival(pktArrivalRate, currentTick);		
-	 					}
 	 					if (currentTick == currentNode.pktGenerationTime) {
 	 						collisionsDetected.add(currentNode);		
 	 					}
@@ -157,14 +156,22 @@ public class DiscreteEventSimulator {
 						source.pktGenerationTime = 0;
 	 				}
  				}
- 				
+
  				for (Node n : nodes) {
  					if (n.waitDuration > 0) {
  						n.waitDuration--;
  					}
  				}
  				
- 				if (isMediumBusy && persistanceParam == 1) { //uh oh, the medium is busy! calculate random wait
+ 				if (isMediumBusy && persistanceParam == 1) {
+	 				for (int j = 0; j < nodes.size(); j++) {
+	 					Node currentNode = nodes.get(j);
+	 					if (currentNode.pktGenerationTime > 0 && currentNode.pktGenerationTime > currentTick) { //never collided, hasn't detected busy before ...
+	 						currentNode.pktGenerationTime = currentTick + 1;
+	 					}
+	 				}
+ 				}
+ 				if (isMediumBusy && persistanceParam == 2) { //uh oh, the medium is busy! calculate random wait
 	 				for (int j = 0; j < nodes.size(); j++) {
 	 					Node currentNode = nodes.get(j);
 	 					if (currentNode.waitDuration == 0) { //never collided, hasn't detected busy before ...
@@ -172,13 +179,8 @@ public class DiscreteEventSimulator {
 	 					}
 	 				}
  				}
- 				else if (isMediumBusy && persistanceParam == 2) { //uh oh, the medium is busy! calculate random wait
-	 				for (int j = 0; j < nodes.size(); j++) {
-	 					Node currentNode = nodes.get(j);
-	 					if (currentNode.waitDuration == 0) {
-	 						currentNode.waitDuration = 	Math.min(2, (int) (Math.random() % 10)); //wait between 2 and 10
-	 					}
-	 				}
+ 				else if (isMediumBusy && persistanceParam == 3) { //uh oh, the medium is busy! calculate random wait
+	 				//????
  				}
  				
  			}
