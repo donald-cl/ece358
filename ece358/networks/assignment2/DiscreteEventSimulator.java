@@ -19,7 +19,8 @@ public class DiscreteEventSimulator {
 	public static int MAX_TICKS = 1000000;
 
 	public static int TEST_RUN_TIMES = 5;
-	public static double TICK_DURATION = 0.0001; // one tick = one millisecond
+	public static double TICK_DURATION = 0.0001; 	// one tick = one millisecond
+	public static int DEFAULT_TRANSMIT_TIME = 3;
 	
 	public static Random rand = new Random();
 
@@ -46,7 +47,7 @@ public class DiscreteEventSimulator {
 	class Node {
 		int waitDuration = 0;
 		boolean isTransmitting = false;
-		int durationRemaining = 0;
+		int transmissionRemaining = 0;
 		int pktGenerationTime = 0;
 		int id = -1;
 		int collisionCounter = 0;
@@ -65,7 +66,7 @@ public class DiscreteEventSimulator {
 			return true;
 		}
 		public int calculateBEB() {
-			int exponentialTime = 1 + (int) (Math.random() * (Math.pow(2,collisionCounter) - 1));	
+			int exponentialTime = (int) (Math.random() * (Math.pow(2,collisionCounter) - 1));	
 			return exponentialTime;
 		}
 	}
@@ -97,12 +98,15 @@ public class DiscreteEventSimulator {
  			int lanSpeed = Integer.parseInt(args[2]);
  			int pktLength = Integer.parseInt(args[3]);
  			int persistanceParam = Integer.parseInt(args[4]);
+
+ 			int transmitTime = (int) ((pktLength * 8) / (lanSpeed * TICK_DURATION));
+
  			System.out.println("yay");
  			
  			DiscreteEventSimulator des = new DiscreteEventSimulator();
  			
  			ArrayList<Node> nodes = new ArrayList<Node>();
- 			HashSet<Integer> collisionsDetected = new HashSet<Integer>();
+ 			HashSet<Node> collisionsDetected = new HashSet<Node>();
  			for (int i = 0; i < compNum; i++) {
  				Node n = des.new Node();
  				n.id = i;
@@ -119,16 +123,30 @@ public class DiscreteEventSimulator {
  						currentNode.generateNextPacketArrival(pktArrivalRate);		
  					}
  					if (currentTick == currentNode.pktGenerationTime) {
- 						collisionsDetected.add(currentNode.id);		
+ 						collisionsDetected.add(currentNode);		
  					}
  				}
  				
  				if (collisionsDetected.size() > 1) {
+ 					for (Node n : collisionsDetected) {
+						n.collisionCounter++;
+						n.waitDuration = n.calculateBEB();
+
+ 					}
+
  					//calculate backoffs, abort
  				}
  				else if (collisionsDetected.size() == 1) {
- 					//send packet
+ 					// create packet
  					Packet p = des.new Packet();
+ 					Node source = collisionsDetected.iterator().next();
+ 					// send packet (ignore distance for now)
+ 					isMediumBusy = true;
+ 					if (currentTick + transmitTime < MAX_TICKS) {
+ 						currentTick += transmitTime; // skip ahead because medium will be busy
+ 					}
+ 					//source.transmissionRemaining = transmitTime;
+
  				}
  				//else no1 wants to send :(
  			}	
