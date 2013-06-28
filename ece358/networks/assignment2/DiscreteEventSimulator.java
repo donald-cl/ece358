@@ -8,6 +8,8 @@ import java.lang.Math;
 public class DiscreteEventSimulator {
 	
 	public boolean isMediumBusy = true;
+	public static boolean dbg = false;
+
 
 	class Packet {
 		public int generationTime;
@@ -28,6 +30,17 @@ public class DiscreteEventSimulator {
 	}
 	public static double unifExp(int packetsPerSecond) { 
 		return (double) -Math.log(1-unifRand())/(packetsPerSecond * TICK_DURATION);
+	}
+	
+	public static double calculatePropogationTime(int nodeSender, int nodeReceiver)
+	{
+		debug("CalculatePropogationTime: Sender: " + nodeSender + " Receiver: " + nodeReceiver);
+		return (10*(nodeSender - nodeReceiver))/250000000;
+	}
+	
+	public static double calculateTransferTime(int lanSpeed, int packetLength)
+	{
+		return packetLength/lanSpeed;
 	}
 	
 	class Node {
@@ -128,6 +141,9 @@ public class DiscreteEventSimulator {
 	}
 
 	public static void debug(String msg) {
-		System.out.println(msg);
+		if(dbg)
+		{
+			System.out.println("DEBUG:" + msg);
+		}
 	}
 }
