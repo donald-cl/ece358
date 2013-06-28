@@ -157,7 +157,7 @@ public class DiscreteEventSimulator {
 	 				}
  				}
 
- 				for (Node n : nodes) {
+ 				/*for (Node n : nodes) {
  					if (n.waitDuration > 0) {
  						n.waitDuration--;
  					}
@@ -181,7 +181,31 @@ public class DiscreteEventSimulator {
  				}
  				else if (isMediumBusy && persistanceParam == 3) { //uh oh, the medium is busy! calculate random wait
 	 				//????
+ 				}*/
+ 				
+ 				if (isMediusBusy)
+ 				{
+ 					for (int j = 0; j< nodes.size(); j++)
+ 					{
+ 						Node currentNode = nodes.get(j);
+ 						if(currentNode.pktGenerationTime > 0 && currentNode.pktGenerationTime > currentTick)
+ 						{
+ 							if(persistanceParam == 1)
+ 							{
+ 								currentNode.pktGenerationTime = currentTick + 1;
+ 							}
+ 							else if (persistanceParam == 2)
+ 							{
+ 								currentNode.pktGenerationTime = currentTick + Math.min(2, (int) (Math.random() % 10));
+ 							}
+ 							else if (persistanceParam == 3)
+ 							{
+ 								//Add this later.
+ 							}
+ 						}
+ 					}
  				}
+ 				
  				
  			}
  		}
