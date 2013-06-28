@@ -3,6 +3,7 @@ package ece358.networks.assignment2;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.lang.Math;
 
 public class DiscreteEventSimulator {
 	
@@ -35,6 +36,7 @@ public class DiscreteEventSimulator {
 		int durationRemaining = 0;
 		int pktGenerationTime = 0;
 		int id = -1;
+		int collisionCounter = 0;
 		
 		public Node() {}
 		
@@ -48,6 +50,10 @@ public class DiscreteEventSimulator {
 		}
 		public boolean isCollisionDetected() {
 			return true;
+		}
+		public int calculateBEB() {
+			int exponentialTime = 1 + (int) (Math.random() * (Math.pow(2,collisionCounter) - 1));	
+			return exponentialTime;
 		}
 	}
 
@@ -112,8 +118,7 @@ public class DiscreteEventSimulator {
  					Packet p = des.new Packet();
  				}
  				//else no1 wants to send :(
- 			}
- 			
+ 			}	
  		}
  		else {
  			debug("Not enough arguments! Enter DiscreteEventSimulator -usage");
