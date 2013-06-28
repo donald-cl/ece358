@@ -116,7 +116,7 @@ public class DiscreteEventSimulator {
  			for (int currentTick = 0; currentTick < MAX_TICKS; currentTick++) {
 
  				// node x wants to send data to node y
-
+ 				collisionsDetected.clear();
  				for (int j = 0; j < nodes.size(); j++) {
  					Node currentNode = nodes.get(j);
  					if (currentNode.pktGenerationTime == 0) {
@@ -144,11 +144,21 @@ public class DiscreteEventSimulator {
  					isMediumBusy = true;
  					if (currentTick + transmitTime < MAX_TICKS) {
  						currentTick += transmitTime; // skip ahead because medium will be busy
+ 						for (Node n : nodes) {
+ 							n.waitDuration -= transmitTime;
+ 							if (n.waitDuration < 0) {
+ 								n.waitDuration = 0;
+ 							}
+ 						}
  					}
  					//source.transmissionRemaining = transmitTime;
-
  				}
- 				//else no1 wants to send :(
+
+ 				for (Node n : nodes) {
+ 					if (n.waitDuration > 0) {
+ 						n.waitDuration--;
+ 					}
+ 				}
  			}	
  		}
  		else {
