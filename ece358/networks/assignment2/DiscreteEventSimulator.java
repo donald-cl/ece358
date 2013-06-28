@@ -142,15 +142,19 @@ public class DiscreteEventSimulator {
  					Node source = collisionsDetected.iterator().next();
  					// send packet (ignore distance for now)
  					isMediumBusy = true;
- 					if (currentTick + transmitTime < MAX_TICKS) {
- 						currentTick += transmitTime; // skip ahead because medium will be busy
- 						for (Node n : nodes) {
- 							n.waitDuration -= transmitTime;
- 							if (n.waitDuration < 0) {
- 								n.waitDuration = 0;
- 							}
- 						}
- 					}
+					currentTick += transmitTime; // skip ahead because medium will be busy
+					
+					///////////////////////////////FIX THIS U HOMO
+
+					//for (Node n : nodes) {
+					//	n.waitDuration -= transmitTime;
+					//	if (n.waitDuration < 0) {
+					//		n.waitDuration = 0;
+					//	}
+					//}
+
+					/////////////////////////////// 
+					source.pktGenerationTime = 0;
  					//source.transmissionRemaining = transmitTime;
  				}
 
