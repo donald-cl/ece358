@@ -1,10 +1,13 @@
-package ece358.networks.assignment2;
+//package ece358.networks.assignment2;
 
 import java.util.Random;
 import java.util.ArrayList;
+import java.util.HashSet<E>;
 
 public class DiscreteEventSimulator {
 	
+	public boolean isMediumBusy = true;
+
 	class Packet {
 		public int generationTime;
 		public int serviceTime;
@@ -30,18 +33,28 @@ public class DiscreteEventSimulator {
 		int waitDuration = 0;
 		boolean isTransmitting = false;
 		int durationRemaining = 0;
+		int pktGenerationTime = 0;
+		int id = -1;
 		
 		public Node() {}
 		
-		public int generateNextPacketArrival(int packetsPerSecond) {
-			int val = (int)unifExp(packetsPerSecond);
-			return val;
+		public void generateNextPacketArrival(int packetsPerSecond) {
+			if (pktGenerationTime == 0) {
+				pktGenerationTime = (int)unifExp(packetsPerSecond);				
+			}
+		}
+		public boolean isTransmissionSuccessful() {
+			return true;
+		}
+		public boolean isCollisionDetected() {
+			return true;
 		}
 	}
 
 	//private final static int LAN_SPEED = 1000000;
 	//private static final int PACKET_LENGTH = 100;
 	private final static int NODE_DISTANCE = 10;
+	private final static double PROPAGATION_SPEED = 2.5E8;
 	
 	public static void main(String args[]) {
 		
@@ -70,9 +83,35 @@ public class DiscreteEventSimulator {
  			DiscreteEventSimulator des = new DiscreteEventSimulator();
  			
  			ArrayList<Node> nodes = new ArrayList<Node>();
+ 			HashSet<Integer> collisionsDetected = new HashSet<Integer>();
  			for (int i = 0; i < compNum; i++) {
  				Node n = des.new Node();
+ 				n.id = i;
  				nodes.add(n);
+ 			}
+ 			Random rand = new Random();
+ 			for (int currentTick = 0; currentTick < MAX_TICKS; currentTick++) {
+
+ 				// node x wants to send data to node y
+
+ 				for (int j = 0; j < nodes.size(); j++) {
+ 					Node currentNode = Node.get(j);
+ 					if (currentNode.pktGenerationTime == 0) {
+ 						currentNode.generateNextPacketArrival();		
+ 					}
+ 					if (currentTick == currentNode.pktGenerationTime) {
+ 						collisionsDetected.put(currentNode.id);	
+ 						// need to calculate BEB for nodes in collisionsDetected	
+ 					}
+ 					else {
+
+ 					}
+ 					
+
+ 					if (node.get(i).pktGenerationTime == i) {
+ 						
+ 					}
+ 				}  	
  			}
  			
  		}
