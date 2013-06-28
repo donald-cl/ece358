@@ -119,7 +119,7 @@ public class DiscreteEventSimulator {
  				if (transmitter != null && transmitter.transmissionRemaining > 0) {
  					transmitter.transmissionRemaining -= 1;
  				}
- 				else if (transmitter != null & transmitter.transmissionRemaining == 0) {	
+ 				else if (transmitter != null && transmitter.transmissionRemaining == 0) {	
  	 				for (Node n : nodes) {
  	 					if (n.id == transmitter.id) {
  	 						n.generateNextPacketArrival(pktArrivalRate, currentTick);
@@ -183,7 +183,7 @@ public class DiscreteEventSimulator {
 	 				//????
  				}*/
  				
- 				if (isMediusBusy)
+ 				if (isMediumBusy)
  				{
  					for (int j = 0; j< nodes.size(); j++)
  					{
