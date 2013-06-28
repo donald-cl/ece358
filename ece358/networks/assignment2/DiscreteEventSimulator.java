@@ -1,4 +1,4 @@
-package ece358.networks.assignment2;
+//package ece358.networks.assignment2;
 
 import java.util.Random;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.lang.Math;
 public class DiscreteEventSimulator {
 	
 	public static boolean isMediumBusy = false;
-	public static boolean dbg = false;
+	public static boolean dbg = true;
 
 
 	class Packet {
@@ -21,6 +21,7 @@ public class DiscreteEventSimulator {
 	public static int TEST_RUN_TIMES = 5;
 	public static double TICK_DURATION = 0.0001; 	// one tick = one millisecond
 	public static int DEFAULT_TRANSMIT_TIME = 3;
+	public static double PROBABILITY_LIMIT = 0.01;
 	
 	public static Random rand = new Random();
 
@@ -51,6 +52,7 @@ public class DiscreteEventSimulator {
 		int pktGenerationTime = 0;
 		int id = -1;
 		int collisionCounter = 0;
+		boolean greaterThanP = false;
 		
 		public Node() {}
 		
@@ -99,7 +101,8 @@ public class DiscreteEventSimulator {
  			int pktLength = Integer.parseInt(args[3]);
  			int persistanceParam = Integer.parseInt(args[4]);
 
- 			int transmitTime = (int) ((pktLength * 8) / (lanSpeed * TICK_DURATION));
+ 			int transmitTime = (int) ((pktLength * 8) / ((lanSpeed * 1000000) * TICK_DURATION));
+ 			debug ("Transmission time: " + transmitTime);
  			int pktsTransmittedSuccessfully = 0;
  			
  			DiscreteEventSimulator des = new DiscreteEventSimulator();
@@ -109,7 +112,12 @@ public class DiscreteEventSimulator {
  			for (int i = 0; i < compNum; i++) {
  				Node n = des.new Node();
  				n.id = i;
- 				n.generateNextPacketArrival(pktArrivalRate, 0);		
+ 				n.generateNextPacketArrival(pktArrivalRate, 0);
+ 				//if (p == 3) {
+				//	Random generator = new Random();
+				//	double probablity = generator.nextDouble();
+				//	n.probablity = probablity;
+				//}		
  				nodes.add(n);
  			}
  			
@@ -130,20 +138,37 @@ public class DiscreteEventSimulator {
  					isMediumBusy = false;
  					pktsTransmittedSuccessfully++;
  				}
- 				
+
  				if (!isMediumBusy) { //nobody else is using the medium, yay :)
+	 				//debug("Medium is not busy");
 	 				collisionsDetected.clear();
 	 				for (int j = 0; j < nodes.size(); j++) {
-	 					Node currentNode = nodes.get(j);
-	 					if (currentTick == currentNode.pktGenerationTime) {
-	 						collisionsDetected.add(currentNode);		
+	 					if (p != 3) {
+							Node currentNode = nodes.get(j); 
+		 					if (currentTick == currentNode.pktGenerationTime) {
+		 						collisionsDetected.add(currentNode);		
+		 					}
+	 					}
+	 					else {
+							Random generator = new Random();
+							probability = new generator();			 					
+		 					if (currentTick == currentNode.pktGenerationTime) {
+			 					if (probability < PROBABILITY_LIMIT) {
+			 						collisionsDetected.add(currentNode);	
+			 					}
+			 					//TODO: FIX LOGIC
+			 					else {
+			 						//currentNode.pktGenerationTime += 1;
+			 						currentNode.greaterThanP = true;
+			 					}
+		 					}
 	 					}
 	 				}
 	 				
 	 				if (collisionsDetected.size() > 1) { //goddamnit, we got a collision :(
+	 					
 	 					for (Node n : collisionsDetected) {
 							n.collisionCounter++;
-							//n.waitDuration = n.calculateBEB();
 							n.pktGenerationTime = currentTick + n.calculateBEB();
 	 					}
 	 				}
@@ -162,6 +187,7 @@ public class DiscreteEventSimulator {
  				
  				if (isMediumBusy)
  				{
+	 				//debug("Medium is busy");
  					for (int j = 0; j< nodes.size(); j++)
  					{
  						Node currentNode = nodes.get(j);
@@ -175,9 +201,25 @@ public class DiscreteEventSimulator {
  							{
  								currentNode.pktGenerationTime = currentTick + Math.min(2, (int) (Math.random() % 10));
  							}
+ 							//TODO: FIX LOGIC
  							else if (persistanceParam == 3)
  							{
- 								//Add this later.
+ 								
+ 								//currentNode.pktGenerationTime += 1;
+ 								for (Node n : nodes) {
+ 									if (n.greaterThanP) {
+
+ 									}
+ 									else {
+
+ 									}
+ 									//if (n.greaterThanP )
+ 									if (n.greaterThanP == true) {
+ 										n.greaterThanP = false;
+ 										n.calculateBEB();
+ 									} 					
+ 								}
+ 								
  							}
  						}
  					}
@@ -185,18 +227,17 @@ public class DiscreteEventSimulator {
  				
  				
  			}
+ 			debug("Number of packets successfully sent: " + pktsTransmittedSuccessfully);
  		}
  		else {
  			debug("Not enough arguments! Enter DiscreteEventSimulator -usage");
  		}
-
-
 	}
 
 	public static void debug(String msg) {
 		if(dbg)
 		{
-			System.out.println("DEBUG:" + msg);
+			System.out.println("DEBUG:	" + msg);
 		}
 	}
 
