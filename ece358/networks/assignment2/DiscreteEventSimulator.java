@@ -1,8 +1,8 @@
-//package ece358.networks.assignment2;
+package ece358.networks.assignment2;
 
 import java.util.Random;
 import java.util.ArrayList;
-import java.util.HashSet<E>;
+import java.util.HashSet;
 
 public class DiscreteEventSimulator {
 	
@@ -95,23 +95,23 @@ public class DiscreteEventSimulator {
  				// node x wants to send data to node y
 
  				for (int j = 0; j < nodes.size(); j++) {
- 					Node currentNode = Node.get(j);
+ 					Node currentNode = nodes.get(j);
  					if (currentNode.pktGenerationTime == 0) {
- 						currentNode.generateNextPacketArrival();		
+ 						currentNode.generateNextPacketArrival(pktArrivalRate);		
  					}
  					if (currentTick == currentNode.pktGenerationTime) {
- 						collisionsDetected.put(currentNode.id);	
- 						// need to calculate BEB for nodes in collisionsDetected	
+ 						collisionsDetected.add(currentNode.id);		
  					}
- 					else {
-
- 					}
- 					
-
- 					if (node.get(i).pktGenerationTime == i) {
- 						
- 					}
- 				}  	
+ 				}
+ 				
+ 				if (collisionsDetected.size() > 1) {
+ 					//calculate backoffs, abort
+ 				}
+ 				else if (collisionsDetected.size() == 1) {
+ 					//send packet
+ 					Packet p = des.new Packet();
+ 				}
+ 				//else no1 wants to send :(
  			}
  			
  		}
