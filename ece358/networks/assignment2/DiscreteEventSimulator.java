@@ -7,7 +7,7 @@ import java.lang.Math;
 
 public class DiscreteEventSimulator {
 	
-	public static boolean isMediumBusy = true;
+	public static boolean isMediumBusy = false;
 	public static boolean dbg = false;
 
 
@@ -100,6 +100,7 @@ public class DiscreteEventSimulator {
  			int persistanceParam = Integer.parseInt(args[4]);
 
  			int transmitTime = (int) ((pktLength * 8) / (lanSpeed * TICK_DURATION));
+ 			int pktsTransmittedSuccessfully = 0;
  			
  			DiscreteEventSimulator des = new DiscreteEventSimulator();
  			ArrayList<Node> nodes = new ArrayList<Node>();
@@ -127,6 +128,7 @@ public class DiscreteEventSimulator {
  	 				}
  					transmitter = null;
  					isMediumBusy = false;
+ 					pktsTransmittedSuccessfully++;
  				}
  				
  				if (!isMediumBusy) { //nobody else is using the medium, yay :)
@@ -141,7 +143,8 @@ public class DiscreteEventSimulator {
 	 				if (collisionsDetected.size() > 1) { //goddamnit, we got a collision :(
 	 					for (Node n : collisionsDetected) {
 							n.collisionCounter++;
-							n.waitDuration = n.calculateBEB();
+							//n.waitDuration = n.calculateBEB();
+							n.pktGenerationTime = currentTick + n.calculateBEB();
 	 					}
 	 				}
 	 				else if (collisionsDetected.size() == 1) { //only 1 transmitter, life is good :)
@@ -151,44 +154,18 @@ public class DiscreteEventSimulator {
 	 					// send packet (ignore distance for now)
 	 					isMediumBusy = true;
 	 					source.transmissionRemaining = transmitTime;
-	 					transmitter = source;
+	 					transmitter = source; 
 
 						source.pktGenerationTime = 0;
 	 				}
  				}
-
- 				/*for (Node n : nodes) {
- 					if (n.waitDuration > 0) {
- 						n.waitDuration--;
- 					}
- 				}
- 				
- 				if (isMediumBusy && persistanceParam == 1) {
-	 				for (int j = 0; j < nodes.size(); j++) {
-	 					Node currentNode = nodes.get(j);
-	 					if (currentNode.pktGenerationTime > 0 && currentNode.pktGenerationTime > currentTick) { //never collided, hasn't detected busy before ...
-	 						currentNode.pktGenerationTime = currentTick + 1;
-	 					}
-	 				}
- 				}
- 				if (isMediumBusy && persistanceParam == 2) { //uh oh, the medium is busy! calculate random wait
-	 				for (int j = 0; j < nodes.size(); j++) {
-	 					Node currentNode = nodes.get(j);
-	 					if (currentNode.waitDuration == 0) { //never collided, hasn't detected busy before ...
-	 						currentNode.waitDuration = 	Math.min(2, (int) (Math.random() % 10)); //wait between 2 and 10
-	 					}
-	 				}
- 				}
- 				else if (isMediumBusy && persistanceParam == 3) { //uh oh, the medium is busy! calculate random wait
-	 				//????
- 				}*/
  				
  				if (isMediumBusy)
  				{
  					for (int j = 0; j< nodes.size(); j++)
  					{
  						Node currentNode = nodes.get(j);
- 						if(currentNode.pktGenerationTime > 0 && currentNode.pktGenerationTime > currentTick)
+ 						if(currentNode != transmitter && currentNode.pktGenerationTime == currentTick)
  						{
  							if(persistanceParam == 1)
  							{
@@ -222,4 +199,31 @@ public class DiscreteEventSimulator {
 			System.out.println("DEBUG:" + msg);
 		}
 	}
+
+
+	/*for (Node n : nodes) {
+ 					if (n.waitDuration > 0) {
+ 						n.waitDuration--;
+ 					}
+ 				}
+ 				
+ 				if (isMediumBusy && persistanceParam == 1) {
+	 				for (int j = 0; j < nodes.size(); j++) {
+	 					Node currentNode = nodes.get(j);
+	 					if (currentNode.pktGenerationTime > 0 && currentNode.pktGenerationTime > currentTick) { //never collided, hasn't detected busy before ...
+	 						currentNode.pktGenerationTime = currentTick + 1;
+	 					}
+	 				}
+ 				}
+ 				if (isMediumBusy && persistanceParam == 2) { //uh oh, the medium is busy! calculate random wait
+	 				for (int j = 0; j < nodes.size(); j++) {
+	 					Node currentNode = nodes.get(j);
+	 					if (currentNode.waitDuration == 0) { //never collided, hasn't detected busy before ...
+	 						currentNode.waitDuration = 	Math.min(2, (int) (Math.random() % 10)); //wait between 2 and 10
+	 					}
+	 				}
+ 				}
+ 				else if (isMediumBusy && persistanceParam == 3) { //uh oh, the medium is busy! calculate random wait
+	 				//????
+ 				}*/
 }
