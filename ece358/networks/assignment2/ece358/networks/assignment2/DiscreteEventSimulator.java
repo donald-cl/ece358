@@ -19,7 +19,7 @@ public class DiscreteEventSimulator {
 		public int serviceTime;
 	}
 
-	public static int MAX_TICKS = 1000000000;
+	public static int MAX_TICKS = 10000000;
 
 	public static int TEST_RUN_TIMES = 5;
 	public static double TICK_DURATION = 0.0001; 	// 1 tick / 1 millionth of a second
@@ -295,8 +295,9 @@ public class DiscreteEventSimulator {
 		for (int compNum = 20; compNum < 100; compNum += 20) {
 			System.out.println("=============================================");
 			System.out.println("Number of nodes : " + compNum);
-			for (int pktArrivalRate = 5; pktArrivalRate < 7; pktArrivalRate ++) {
+			for (int pktArrivalRate = 5; pktArrivalRate <= 7; pktArrivalRate ++) {
 				System.out.println("Arrival Rate : " + pktArrivalRate);
+				total = 0;
 				for(int n = 0; n < 5; n++)
 				{
 					fails = 0;
