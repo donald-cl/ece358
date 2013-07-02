@@ -1,0 +1,381 @@
+=============================================
+Number of nodes : 20
+Arrival Rate : 4
+Test #0
+Number of packets successfully sent: 6951
+Number of failed packets: 2316
+Average packet delay: 331
+Test #1
+Number of packets successfully sent: 7023
+Number of failed packets: 2662
+Average packet delay: 350
+Test #2
+Number of packets successfully sent: 7109
+Number of failed packets: 2505
+Average packet delay: 350
+Test #3
+Number of packets successfully sent: 7062
+Number of failed packets: 2457
+Average packet delay: 346
+Test #4
+Number of packets successfully sent: 7117
+Number of failed packets: 2869
+Average packet delay: 369
+Number of nodes : 20 -- Arrival rate : 4 -- The average is 7052
+
+=============================================
+
+Arrival Rate : 8
+Test #0
+Number of packets successfully sent: 8136
+Number of failed packets: 24219
+Average packet delay: 1200
+Test #1
+Number of packets successfully sent: 8136
+Number of failed packets: 23890
+Average packet delay: 1197
+Test #2
+Number of packets successfully sent: 8132
+Number of failed packets: 25169
+Average packet delay: 1216
+Test #3
+Number of packets successfully sent: 8133
+Number of failed packets: 25108
+Average packet delay: 1220
+Test #4
+Number of packets successfully sent: 8135
+Number of failed packets: 24271
+Average packet delay: 1207
+Number of nodes : 20 -- Arrival rate : 8 -- The average is 8134
+
+=============================================
+
+Arrival Rate : 12
+Test #0
+Number of packets successfully sent: 8105
+Number of failed packets: 40334
+Average packet delay: 1651
+Test #1
+Number of packets successfully sent: 8108
+Number of failed packets: 39968
+Average packet delay: 1639
+Test #2
+Number of packets successfully sent: 8103
+Number of failed packets: 40444
+Average packet delay: 1639
+Test #3
+Number of packets successfully sent: 8103
+Number of failed packets: 40533
+Average packet delay: 1622
+Test #4
+Number of packets successfully sent: 8104
+Number of failed packets: 40709
+Average packet delay: 1645
+Number of nodes : 20 -- Arrival rate : 12 -- The average is 8104
+
+=============================================
+
+Arrival Rate : 16
+Test #0
+Number of packets successfully sent: 8087
+Number of failed packets: 49121
+Average packet delay: 1843
+Test #1
+Number of packets successfully sent: 8083
+Number of failed packets: 49995
+Average packet delay: 1846
+Test #2
+Number of packets successfully sent: 8087
+Number of failed packets: 49325
+Average packet delay: 1840
+Test #3
+Number of packets successfully sent: 8084
+Number of failed packets: 49294
+Average packet delay: 1838
+Test #4
+Number of packets successfully sent: 8087
+Number of failed packets: 49119
+Average packet delay: 1832
+Number of nodes : 20 -- Arrival rate : 16 -- The average is 8085
+
+=============================================
+
+Arrival Rate : 20
+Test #0
+Number of packets successfully sent: 8074
+Number of failed packets: 55142
+Average packet delay: 1973
+Test #1
+Number of packets successfully sent: 8071
+Number of failed packets: 55867
+Average packet delay: 1979
+Test #2
+Number of packets successfully sent: 8071
+Number of failed packets: 55493
+Average packet delay: 1978
+Test #3
+Number of packets successfully sent: 8074
+Number of failed packets: 55080
+Average packet delay: 1969
+Test #4
+Number of packets successfully sent: 8072
+Number of failed packets: 55109
+Average packet delay: 1972
+Number of nodes : 20 -- Arrival rate : 20 -- The average is 8072
+
+=============================================
+
+=============================================
+Number of nodes : 30
+Arrival Rate : 4
+Test #0
+Number of packets successfully sent: 8117
+Number of failed packets: 23986
+Average packet delay: 1181
+Test #1
+Number of packets successfully sent: 8123
+Number of failed packets: 25179
+Average packet delay: 1207
+Test #2
+Number of packets successfully sent: 8118
+Number of failed packets: 24427
+Average packet delay: 1182
+Test #3
+Number of packets successfully sent: 8121
+Number of failed packets: 25106
+Average packet delay: 1202
+Test #4
+Number of packets successfully sent: 8116
+Number of failed packets: 23768
+Average packet delay: 1161
+Number of nodes : 30 -- Arrival rate : 4 -- The average is 8119
+
+=============================================
+
+Arrival Rate : 8
+Test #0
+Number of packets successfully sent: 8022
+Number of failed packets: 80524
+Average packet delay: 2476
+Test #1
+Number of packets successfully sent: 8026
+Number of failed packets: 80162
+Average packet delay: 2483
+Test #2
+Number of packets successfully sent: 8020
+Number of failed packets: 80908
+Average packet delay: 2479
+Test #3
+Number of packets successfully sent: 8021
+Number of failed packets: 80652
+Average packet delay: 2484
+Test #4
+Number of packets successfully sent: 8020
+Number of failed packets: 81469
+Average packet delay: 2491
+Number of nodes : 30 -- Arrival rate : 8 -- The average is 8021
+
+=============================================
+
+Arrival Rate : 12
+Test #0
+Number of packets successfully sent: 7978
+Number of failed packets: 104068
+Average packet delay: 2917
+Test #1
+Number of packets successfully sent: 7980
+Number of failed packets: 103582
+Average packet delay: 2921
+Test #2
+Number of packets successfully sent: 7977
+Number of failed packets: 103900
+Average packet delay: 2913
+Test #3
+Number of packets successfully sent: 7983
+Number of failed packets: 103075
+Average packet delay: 2916
+Test #4
+Number of packets successfully sent: 7977
+Number of failed packets: 104567
+Average packet delay: 2922
+Number of nodes : 30 -- Arrival rate : 12 -- The average is 7979
+
+=============================================
+
+Arrival Rate : 16
+Test #0
+Number of packets successfully sent: 7961
+Number of failed packets: 114294
+Average packet delay: 3135
+Test #1
+Number of packets successfully sent: 7953
+Number of failed packets: 116067
+Average packet delay: 3133
+Test #2
+Number of packets successfully sent: 7959
+Number of failed packets: 114970
+Average packet delay: 3131
+Test #3
+Number of packets successfully sent: 7955
+Number of failed packets: 114452
+Average packet delay: 3120
+Test #4
+Number of packets successfully sent: 7957
+Number of failed packets: 114310
+Average packet delay: 3120
+Number of nodes : 30 -- Arrival rate : 16 -- The average is 7957
+
+=============================================
+
+Arrival Rate : 20
+Test #0
+Number of packets successfully sent: 7944
+Number of failed packets: 122398
+Average packet delay: 3264
+Test #1
+Number of packets successfully sent: 7941
+Number of failed packets: 123243
+Average packet delay: 3273
+Test #2
+Number of packets successfully sent: 7942
+Number of failed packets: 122618
+Average packet delay: 3270
+Test #3
+Number of packets successfully sent: 7948
+Number of failed packets: 121495
+Average packet delay: 3256
+Test #4
+Number of packets successfully sent: 7945
+Number of failed packets: 123014
+Average packet delay: 3270
+Number of nodes : 30 -- Arrival rate : 20 -- The average is 7944
+
+=============================================
+
+=============================================
+Number of nodes : 40
+Arrival Rate : 4
+Test #0
+Number of packets successfully sent: 8018
+Number of failed packets: 81619
+Average packet delay: 2478
+Test #1
+Number of packets successfully sent: 8025
+Number of failed packets: 79858
+Average packet delay: 2458
+Test #2
+Number of packets successfully sent: 8017
+Number of failed packets: 82414
+Average packet delay: 2502
+Test #3
+Number of packets successfully sent: 8018
+Number of failed packets: 81138
+Average packet delay: 2475
+Test #4
+Number of packets successfully sent: 8024
+Number of failed packets: 79359
+Average packet delay: 2459
+Number of nodes : 40 -- Arrival rate : 4 -- The average is 8020
+
+=============================================
+
+Arrival Rate : 8
+Test #0
+Number of packets successfully sent: 7895
+Number of failed packets: 152408
+Average packet delay: 3802
+Test #1
+Number of packets successfully sent: 7896
+Number of failed packets: 151429
+Average packet delay: 3781
+Test #2
+Number of packets successfully sent: 7895
+Number of failed packets: 152937
+Average packet delay: 3806
+Test #3
+Number of packets successfully sent: 7889
+Number of failed packets: 154985
+Average packet delay: 3834
+Test #4
+Number of packets successfully sent: 7895
+Number of failed packets: 152038
+Average packet delay: 3786
+Number of nodes : 40 -- Arrival rate : 8 -- The average is 7894
+
+=============================================
+
+Arrival Rate : 12
+Test #0
+Number of packets successfully sent: 7858
+Number of failed packets: 176853
+Average packet delay: 4231
+Test #1
+Number of packets successfully sent: 7856
+Number of failed packets: 177217
+Average packet delay: 4244
+Test #2
+Number of packets successfully sent: 7856
+Number of failed packets: 176993
+Average packet delay: 4241
+Test #3
+Number of packets successfully sent: 7851
+Number of failed packets: 179217
+Average packet delay: 4255
+Test #4
+Number of packets successfully sent: 7856
+Number of failed packets: 176860
+Average packet delay: 4227
+Number of nodes : 40 -- Arrival rate : 12 -- The average is 7855
+
+=============================================
+
+Arrival Rate : 16
+Test #0
+Number of packets successfully sent: 7836
+Number of failed packets: 189850
+Average packet delay: 4455
+Test #1
+Number of packets successfully sent: 7837
+Number of failed packets: 189430
+Average packet delay: 4448
+Test #2
+Number of packets successfully sent: 7836
+Number of failed packets: 189598
+Average packet delay: 4451
+Test #3
+Number of packets successfully sent: 7837
+Number of failed packets: 189814
+Average packet delay: 4465
+Test #4
+Number of packets successfully sent: 7840
+Number of failed packets: 189013
+Average packet delay: 4457
+Number of nodes : 40 -- Arrival rate : 16 -- The average is 7837
+
+=============================================
+
+Arrival Rate : 20
+Test #0
+Number of packets successfully sent: 7832
+Number of failed packets: 195426
+Average packet delay: 4572
+Test #1
+Number of packets successfully sent: 7823
+Number of failed packets: 198421
+Average packet delay: 4603
+Test #2
+Number of packets successfully sent: 7830
+Number of failed packets: 196444
+Average packet delay: 4583
+Test #3
+Number of packets successfully sent: 7822
+Number of failed packets: 198139
+Average packet delay: 4596
+Test #4
+Number of packets successfully sent: 7829
+Number of failed packets: 196492
+Average packet delay: 4585
+Number of nodes : 40 -- Arrival rate : 20 -- The average is 7827
+
+=============================================
+

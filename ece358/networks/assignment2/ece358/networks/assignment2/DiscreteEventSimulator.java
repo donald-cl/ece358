@@ -1,4 +1,4 @@
-package ece358.networks.assignment2;
+//package ece358.networks.assignment2;
 
 import java.util.Random;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class DiscreteEventSimulator {
 		public int serviceTime;
 	}
 
-	public static int MAX_TICKS = 10000000;
+	public static int MAX_TICKS = 1000000;
 
 	public static int TEST_RUN_TIMES = 5;
 	public static double TICK_DURATION = 0.0001; 	// 1 tick / 1 millionth of a second
@@ -57,6 +57,7 @@ public class DiscreteEventSimulator {
 		int collisionCounter = 1;
 		boolean greaterThanP = false;
 		public double probability = 0.0;
+		int origPktGenTime = 0;
 		
 		public Node() {}
 		
@@ -90,8 +91,10 @@ public class DiscreteEventSimulator {
 		int persistanceParam = p1;
 		
 		int transmitTime = (int) ((pktLength * 8) / ((lanSpeed * 1000000) * TICK_DURATION));
-		System.out.println("Transmission time: " + transmitTime);
+		//System.out.println("Transmission time: " + transmitTime);
 		int pktsTransmittedSuccessfully = 0;
+		int totalDelay = 0;
+		int origPktGenTime = 0;
 		
 		ArrayList<Node> nodes = new ArrayList<Node>();
 		HashSet<Node> collisionsDetected = new HashSet<Node>();
@@ -100,6 +103,7 @@ public class DiscreteEventSimulator {
 			Node n = des.new Node();
 			n.id = i;
 			n.generateNextPacketArrival(pktArrivalRate, 0);
+			n.origPktGenTime = n.pktGenerationTime;
 			//n.probability  = Math.random() % 10;
 			//if (p == 3) {
 		//	Random generator = new Random();
@@ -120,14 +124,18 @@ public class DiscreteEventSimulator {
 				transmitter.transmissionRemaining -= 1;
 			}
 			else if (transmitter != null && transmitter.transmissionRemaining == 0) {	
+ 				totalDelay += currentTick - transmitter.origPktGenTime;
+ 				debug("Delay: " + (currentTick - transmitter.origPktGenTime));
  				for (Node n : nodes) {
  					if (n.id == transmitter.id) {
  						n.generateNextPacketArrival(pktArrivalRate, currentTick);
+ 						n.origPktGenTime = n.pktGenerationTime;
  					}
  				}
 				transmitter = null;
 				isMediumBusy = false;
 				pktsTransmittedSuccessfully++;
+
 			}
 			/* END OF TRANSMISSION CHECK */
 						
@@ -276,6 +284,7 @@ public class DiscreteEventSimulator {
 			}
 			System.out.println("Number of packets successfully sent: " + pktsTransmittedSuccessfully);
 			System.out.println("Number of failed packets: " + fails);
+			System.out.println("Average packet delay: " + (totalDelay/pktsTransmittedSuccessfully));
 			return pktsTransmittedSuccessfully;
 	}
 	
@@ -284,11 +293,11 @@ public class DiscreteEventSimulator {
 	private final static int NODE_DISTANCE = 10;
 	private final static double PROPAGATION_SPEED = 2.5E8;
 	
-	public static void simulate() {
+	public static void simulate1() {
 		
 		int lanSpeed = 1;
 		int pktLength = 1500;
-		int persistanceParam = 1;
+		int persistanceParam = 3;
 
 		int total = 0;
 		
@@ -311,10 +320,38 @@ public class DiscreteEventSimulator {
 		}
 
 	}
+	public static void simulate2() {
+		
+		int lanSpeed = 1;
+		int pktLength = 1500;
+		int persistanceParam = 3;
+
+		int total = 0;
+		
+		for (int compNum = 20; compNum <= 40; compNum += 10) {
+			System.out.println("=============================================");
+			System.out.println("Number of nodes : " + compNum);
+			for (int pktArrivalRate = 4; pktArrivalRate <= 20; pktArrivalRate +=4) {
+				System.out.println("Arrival Rate : " + pktArrivalRate);
+				total = 0;
+				for(int n = 0; n < 5; n++)
+				{
+					fails = 0;
+					isMediumBusy = false;
+					System.out.println("Test #" + n);
+					total = total + driver(compNum, pktArrivalRate, lanSpeed, pktLength, persistanceParam);
+				}
+				System.out.println("Number of nodes : " + compNum+ " -- Arrival rate : " + pktArrivalRate + " -- The average is " + total/5 +"\n");
+				System.out.println("=============================================\n");
+			}
+		}
+
+	}
 	
 	public static void main(String args[]) {
 		
-		simulate();
+		//simulate1();
+		simulate2();
 		
 		/*if (args.length == 1 && args[0].equals("-usage")) {
 			debug("------------------------------------------------------------------------");
