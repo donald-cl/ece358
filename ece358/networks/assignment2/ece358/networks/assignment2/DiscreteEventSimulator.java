@@ -137,11 +137,8 @@ public class DiscreteEventSimulator {
 					Node currentNode = nodes.get(j); 
  					if (currentTick == currentNode.pktGenerationTime) {
  						
-						if (persistanceParam == 3) {
-							double probability = (randomGenerator.nextInt(100)+1)/100.0;
-		 					if (probability > PROBABILITY_LIMIT) {
-		 						collisionsDetected.add(currentNode);	
-		 					}
+						if (persistanceParam == 3 && currentNode.greaterThanP) {
+		 					collisionsDetected.add(currentNode);	
 	 					}
 						else {
 							collisionsDetected.add(currentNode);	
