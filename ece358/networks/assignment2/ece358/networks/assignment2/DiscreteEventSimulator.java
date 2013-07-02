@@ -9,14 +9,15 @@ public class DiscreteEventSimulator {
 	
 	public static boolean isMediumBusy = false;
 	public static boolean dbg = false;
-
+	public static int fails = 0;
+	public static Random randomGenerator = new Random();
 
 	class Packet {
 		public int generationTime;
 		public int serviceTime;
 	}
 
-	public static int MAX_TICKS = 10000000;
+	public static int MAX_TICKS = 1000000;
 
 	public static int TEST_RUN_TIMES = 5;
 	public static double TICK_DURATION = 0.0001; 	// 1 tick / 1 millionth of a second
@@ -69,12 +70,11 @@ public class DiscreteEventSimulator {
 			return true;
 		}
 		public int calculateBEB() {
-			Random randomGenerator = new Random();
-			int exponentialTime = randomGenerator.nextInt((int) (Math.pow(2,collisionCounter));
+			int exponentialTime = randomGenerator.nextInt((int) (Math.pow(2,collisionCounter) - 1));
 			if (exponentialTime == 0) {
 				exponentialTime += 1;
 			}
-			
+			fails++;
 			return exponentialTime;
 		}
 	}
@@ -140,11 +140,15 @@ public class DiscreteEventSimulator {
 					}
 				}
 				
-				if (collisionsDetected.size() > 1) { //goddamnit, we got a collision :(
+				if (collisionsDetected.size() > 1) { 
 					debug("Collision array: \n");
 					for (Node n : collisionsDetected) {
 						String temp = "";
 						n.collisionCounter++;
+						if(n.collisionCounter == 11)
+						{
+							n.collisionCounter = 1;
+						}
 						temp = "\t\tID: " + n.id + "\t Collision Counter:" + n.collisionCounter + "\tOld Packet Generation time:" + n.pktGenerationTime;
 						n.pktGenerationTime = currentTick + n.calculateBEB();
 						temp = temp + "\tNew Packet Geneartion time:" + n.pktGenerationTime;
@@ -165,8 +169,8 @@ public class DiscreteEventSimulator {
 		 					source.transmissionRemaining = transmitTime;
 		 					transmitter = source; 
 		 					
-		 					//might need to make sure Math.random doesn't suck .. 
-		 					int receiver_id = ((int) (Math.random()) % compNum);
+		 					//Gnerate a number between 1 and 1000 and mod it by the number of computers
+		 					int receiver_id = ((int) (randomGenerator.nextInt(1000) + 1) % compNum);
 		 					
 		 					double propogationTime = calculatePropogationTime(source.id, receiver_id);
 		 					
@@ -176,9 +180,13 @@ public class DiscreteEventSimulator {
  						}
  						else 
  						{
-							double probability = Math.random() % 10;			 					
+							double probability = (randomGenerator.nextInt(100)+1)/100;			 					
 		 					if (probability < PROBABILITY_LIMIT) {
 		 						source.collisionCounter++;
+		 						if(source.collisionCounter == 11)
+								{
+									source.collisionCounter = 1;
+								}
 								source.pktGenerationTime = currentTick + source.calculateBEB();
 		 					}
 		 					else 
@@ -201,8 +209,8 @@ public class DiscreteEventSimulator {
 	 					
 	 					do
 	 					{
-	 						//might need to make sure Math.random doesn't suck .. 
-	 						receiver_id = ((int) (Math.random() * 100) % compNum);
+	 						// Generate a random number between 1 and 100 and mod it by the number of computers
+	 						receiver_id = ((int) (randomGenerator.nextInt(100)) % compNum);
 	 					}while(source.id == receiver_id);
 	 						
 	 					double propogationTime = calculatePropogationTime(source.id, receiver_id);
@@ -227,7 +235,7 @@ public class DiscreteEventSimulator {
 							}
 							else if (persistanceParam == 2)
 							{
-								currentNode.pktGenerationTime = currentTick + Math.min(2, (int) (Math.random() % 10));
+								currentNode.pktGenerationTime = currentTick + randomGenerator.nextInt(9) + 2;
 							}
 							//TODO: FIX LOGIC
 							else if (persistanceParam == 3)
@@ -251,6 +259,7 @@ public class DiscreteEventSimulator {
 				
 			}
 			System.out.println("Number of packets successfully sent: " + pktsTransmittedSuccessfully);
+			System.out.println("Number of failed packets: " + fails);
 			return pktsTransmittedSuccessfully;
 	}
 	
@@ -285,6 +294,8 @@ public class DiscreteEventSimulator {
 			int total = 0;
 			for(int n = 0; n < 5; n++)
 			{
+				fails = 0;
+				isMediumBusy = false;
 				System.out.println("Test #" + n);
 				total = total + driver(compNum, pktArrivalRate, lanSpeed, pktLength, persistanceParam);
 			}
