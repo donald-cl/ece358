@@ -69,7 +69,12 @@ public class DiscreteEventSimulator {
 			return true;
 		}
 		public int calculateBEB() {
-			int exponentialTime = (int) (Math.random() * 100 * (Math.pow(2,collisionCounter) - 1));	
+			Random randomGenerator = new Random();
+			int randomInt = randomGenerator.nextInt(10);
+			if (randomInt == 0) {
+				randomInt += 1;
+			}
+			int exponentialTime = (int) (randomInt * (Math.pow(2,collisionCounter) - 1));	
 			return exponentialTime;
 		}
 	}
