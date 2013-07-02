@@ -17,7 +17,7 @@ public class DiscreteEventSimulator {
 		public int serviceTime;
 	}
 
-	public static int MAX_TICKS = 1000000;
+	public static int MAX_TICKS = 1000000000;
 
 	public static int TEST_RUN_TIMES = 5;
 	public static double TICK_DURATION = 0.0001; 	// 1 tick / 1 millionth of a second
@@ -136,7 +136,16 @@ public class DiscreteEventSimulator {
 				for (int j = 0; j < nodes.size(); j++) {
 					Node currentNode = nodes.get(j); 
  					if (currentTick == currentNode.pktGenerationTime) {
- 						collisionsDetected.add(currentNode);		
+ 						
+						if (persistanceParam == 3) {
+							double probability = (randomGenerator.nextInt(100)+1)/100.0;
+		 					if (probability > PROBABILITY_LIMIT) {
+		 						collisionsDetected.add(currentNode);	
+		 					}
+	 					}
+						else {
+							collisionsDetected.add(currentNode);	
+						}
 					}
 				}
 				
@@ -180,14 +189,16 @@ public class DiscreteEventSimulator {
  						}
  						else 
  						{
-							double probability = (randomGenerator.nextInt(100)+1)/100;			 					
+							double probability = (randomGenerator.nextInt(100)+1)/100.0;			 					
 		 					if (probability < PROBABILITY_LIMIT) {
+		 						/*
 		 						source.collisionCounter++;
 		 						if(source.collisionCounter == 11)
 								{
 									source.collisionCounter = 1;
 								}
 								source.pktGenerationTime = currentTick + source.calculateBEB();
+								*/
 		 					}
 		 					else 
 		 					{
