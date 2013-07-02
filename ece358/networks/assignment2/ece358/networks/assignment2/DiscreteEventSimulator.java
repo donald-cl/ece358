@@ -206,6 +206,7 @@ public class DiscreteEventSimulator {
 		 					else 
 		 					{
 		 						source.greaterThanP = true;
+		 						source.pktGenerationTime = currentTick + 1;
 		 						//wait for next slot to send the packet
 		 					}
  						}
