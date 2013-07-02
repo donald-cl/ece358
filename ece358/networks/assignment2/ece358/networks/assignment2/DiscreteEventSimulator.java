@@ -8,18 +8,19 @@ import java.lang.Math;
 public class DiscreteEventSimulator {
 	
 	public static boolean isMediumBusy = false;
-	public static boolean dbg = true;
+	public static boolean dbg = false;
 
 
 	class Packet {
 		public int generationTime;
 		public int serviceTime;
+		
 	}
 
-	public static int MAX_TICKS = 1000000;
+	public static int MAX_TICKS = 100000000;
 
 	public static int TEST_RUN_TIMES = 5;
-	public static double TICK_DURATION = 0.0000001; 	// 1 tick / 1 millionth of a second
+	public static double TICK_DURATION = 0.0001; 	// 1 tick / 1 millionth of a second
 	public static int DEFAULT_TRANSMIT_TIME = 3;
 	public static double PROBABILITY_LIMIT = 0.01;
 	
@@ -37,7 +38,9 @@ public class DiscreteEventSimulator {
 	public static double calculatePropogationTime(int nodeSender, int nodeReceiver)
 	{
 		debug("CalculatePropogationTime: Sender: " + nodeSender + " Receiver: " + nodeReceiver);
-		return ((10*(nodeSender - nodeReceiver))/250000000) * TICK_DURATION;
+		return ((10* Math.abs(nodeSender - nodeReceiver))/200000000) / TICK_DURATION;
+		//return ((10*(nodeSender - nodeReceiver))/200000000);
+
 	}
 	
 	public static double calculateTransferTime(int lanSpeed, int packetLength)
@@ -69,11 +72,183 @@ public class DiscreteEventSimulator {
 			return true;
 		}
 		public int calculateBEB() {
-			int exponentialTime = (int) (Math.random() * (Math.pow(2,collisionCounter) - 1));	
+			int exponentialTime = (int) (Math.random() * 100 * (Math.pow(2,collisionCounter) - 1));	
 			return exponentialTime;
 		}
 	}
 
+	private static int driver(int n1, int a1, int w1, int l1, int p1)
+	{
+		int compNum = n1;
+		int pktArrivalRate = a1;
+		int lanSpeed = w1;
+		int pktLength = l1;
+		int persistanceParam = p1;
+		
+
+			int transmitTime = (int) ((pktLength * 8) / ((lanSpeed * 1000000) * TICK_DURATION));
+			System.out.println("Transmission time: " + transmitTime);
+			int pktsTransmittedSuccessfully = 0;
+			
+			DiscreteEventSimulator des = new DiscreteEventSimulator();
+			ArrayList<Node> nodes = new ArrayList<Node>();
+			HashSet<Node> collisionsDetected = new HashSet<Node>();
+			
+			for (int i = 0; i < compNum; i++) {
+				Node n = des.new Node();
+				n.id = i;
+				n.generateNextPacketArrival(pktArrivalRate, 0);
+				//n.probability  = Math.random() % 10;
+				//if (p == 3) {
+			//	Random generator = new Random();
+			//	double probablity = generator.nextDouble();
+			//	n.probablity = probablity;
+			//}
+				nodes.add(n);
+			}
+			
+			Node transmitter = null;
+			
+			for (int currentTick = 0; currentTick < MAX_TICKS; currentTick++) {
+				
+				// i think this should be the last thing we do, not the first ...?
+				
+				/* CHECK IF A NODE IS TRANSMITTING */
+				if (transmitter != null && transmitter.transmissionRemaining > 0) {
+					transmitter.transmissionRemaining -= 1;
+				}
+				else if (transmitter != null && transmitter.transmissionRemaining == 0) {	
+	 				for (Node n : nodes) {
+	 					if (n.id == transmitter.id) {
+	 						n.generateNextPacketArrival(pktArrivalRate, currentTick);
+	 					}
+	 				}
+					transmitter = null;
+					isMediumBusy = false;
+					pktsTransmittedSuccessfully++;
+					
+				}
+				/* END OF TRANSMISSION CHECK */
+				
+				
+				if (!isMediumBusy) { //nobody else is using the medium, yay :)
+ 				collisionsDetected.clear();
+ 				for (int j = 0; j < nodes.size(); j++) {
+ 					Node currentNode = nodes.get(j); 
+ 					if (currentTick == currentNode.pktGenerationTime) {
+	 						collisionsDetected.add(currentNode);		
+ 					}
+ 				}
+ 				
+ 				if (collisionsDetected.size() > 1) { //goddamnit, we got a collision :(
+ 					debug("Collision array: \n");
+ 					for (Node n : collisionsDetected) {
+ 						String temp = "";
+						n.collisionCounter++;
+						temp = "\t\tID: " + n.id + "\t Collision Counter:" + n.collisionCounter + "\tOld Packet Generation time:" + n.pktGenerationTime;
+						n.pktGenerationTime = currentTick + n.calculateBEB();
+						temp = temp + "\tNew Packet Geneartion time:" + n.pktGenerationTime;
+						debug(temp);							
+ 					}
+ 				}
+ 				else if (collisionsDetected.size() == 1) { //only 1 transmitter, life is good :)
+ 					
+ 					Node source = collisionsDetected.iterator().next();
+ 					
+ 					if (persistanceParam == 3) {
+ 						if (source.greaterThanP) { //this means we got lucky and are able to send, IN ADDITION, the medium is NOT BUSY ... YAY :)
+ 							
+		 					// create packet
+		 					Packet p = des.new Packet();
+		 					// send packet (ignore distance for now)
+		 					isMediumBusy = true;
+		 					source.transmissionRemaining = transmitTime;
+		 					transmitter = source; 
+		 					
+		 					//might need to make sure Math.random doesn't suck .. 
+		 					int receiver_id = ((int) (Math.random()) % compNum);
+		 					
+		 					double propogationTime = calculatePropogationTime(source.id, receiver_id);
+		 					
+		 					source.transmissionRemaining += propogationTime;
+
+							source.pktGenerationTime = 0;
+ 						}
+ 						else { // we either had to re-roll or have not rolled a probability yet 
+							double probability = Math.random() % 10;			 					
+		 					if (probability < PROBABILITY_LIMIT) {
+		 						//we got fucked by probability :(
+		 						source.collisionCounter++;
+								source.pktGenerationTime = currentTick + source.calculateBEB();
+		 					}
+		 					else {
+		 						source.greaterThanP = true;
+		 						//wait for next slot to send the packet
+		 					}
+ 						}
+ 					}
+ 					else 
+ 					{
+	 					// create packet
+	 					Packet p = des.new Packet();
+	 					// send packet (ignore distance for now)
+	 					isMediumBusy = true;
+	 					source.transmissionRemaining = transmitTime;
+	 					transmitter = source; 
+
+	 					int receiver_id;
+	 					
+	 					do
+	 					{
+	 						//might need to make sure Math.random doesn't suck .. 
+	 						receiver_id = ((int) (Math.random() * 100) % compNum);
+	 					}while(source.id == receiver_id);
+	 						
+	 					double propogationTime = calculatePropogationTime(source.id, receiver_id);
+	 					
+	 					source.transmissionRemaining += propogationTime;
+	 					
+						source.pktGenerationTime = 0;
+ 					}
+ 				}
+				}
+				else if (isMediumBusy)
+				{
+ 				//debug("Medium is busy");
+					for (int j = 0; j< nodes.size(); j++)
+					{
+						Node currentNode = nodes.get(j);
+						if(currentNode != transmitter && currentNode.pktGenerationTime == currentTick)
+						{
+							if(persistanceParam == 1)
+							{
+								currentNode.pktGenerationTime = currentTick + 1;
+							}
+							else if (persistanceParam == 2)
+							{
+								currentNode.pktGenerationTime = currentTick + Math.min(2, (int) (Math.random() % 10));
+							}
+							//TODO: FIX LOGIC
+							else if (persistanceParam == 3)
+							{
+								//currentNode.pktGenerationTime += 1;
+								for (Node n : nodes) {
+									if (n.greaterThanP) {
+										n.collisionCounter++;
+										n.pktGenerationTime = currentTick + n.calculateBEB();
+									}		
+								}
+							}
+						}
+					}
+				}
+				
+				
+			}
+			System.out.println("Number of packets successfully sent: " + pktsTransmittedSuccessfully);
+			return pktsTransmittedSuccessfully;
+	}
+	
 	//private final static int LAN_SPEED = 1000000;
 	//private static final int PACKET_LENGTH = 100;
 	private final static int NODE_DISTANCE = 10;
@@ -94,166 +269,25 @@ public class DiscreteEventSimulator {
 			debug("DiscreteEventSimulator <N> <A> <W> <L> <P>");
 			debug("");
  		}
- 		else if (args.length == 5) {
- 			
+ 		else if (args.length == 5) 
+ 		{
  			int compNum = Integer.parseInt(args[0]);
- 			int pktArrivalRate = Integer.parseInt(args[1]);
- 			int lanSpeed = Integer.parseInt(args[2]);
- 			int pktLength = Integer.parseInt(args[3]);
- 			int persistanceParam = Integer.parseInt(args[4]);
-
- 			int transmitTime = (int) ((pktLength * 8) / ((lanSpeed * 1000000) * TICK_DURATION));
- 			debug ("Transmission time: " + transmitTime);
- 			int pktsTransmittedSuccessfully = 0;
+			int pktArrivalRate = Integer.parseInt(args[1]);
+			int lanSpeed = Integer.parseInt(args[2]);
+			int pktLength = Integer.parseInt(args[3]);
+			int persistanceParam = Integer.parseInt(args[4]);
+			
+			int total = 0;
+			for(int n = 0; n < 5; n++)
+			{
+				System.out.println("Test #" + n);
+				total = total + driver(compNum, pktArrivalRate, lanSpeed, pktLength, persistanceParam);
+			}
  			
- 			DiscreteEventSimulator des = new DiscreteEventSimulator();
- 			ArrayList<Node> nodes = new ArrayList<Node>();
- 			HashSet<Node> collisionsDetected = new HashSet<Node>();
- 			
- 			for (int i = 0; i < compNum; i++) {
- 				Node n = des.new Node();
- 				n.id = i;
- 				n.generateNextPacketArrival(pktArrivalRate, 0);
- 				//n.probability  = Math.random() % 10;
- 				//if (p == 3) {
-				//	Random generator = new Random();
-				//	double probablity = generator.nextDouble();
-				//	n.probablity = probablity;
-				//}
- 				nodes.add(n);
- 			}
- 			
- 			Node transmitter = null;
- 			
- 			for (int currentTick = 0; currentTick < MAX_TICKS; currentTick++) {
- 				
- 				// i think this should be the last thing we do, not the first ...?
- 				
- 				/* CHECK IF A NODE IS TRANSMITTING */
- 				if (transmitter != null && transmitter.transmissionRemaining > 0) {
- 					transmitter.transmissionRemaining -= 1;
- 				}
- 				else if (transmitter != null && transmitter.transmissionRemaining == 0) {	
- 	 				for (Node n : nodes) {
- 	 					if (n.id == transmitter.id) {
- 	 						n.generateNextPacketArrival(pktArrivalRate, currentTick);
- 	 					}
- 	 				}
- 					transmitter = null;
- 					isMediumBusy = false;
- 					pktsTransmittedSuccessfully++;
- 					
- 				}
- 				/* END OF TRANSMISSION CHECK */
- 				
- 				
- 				if (!isMediumBusy) { //nobody else is using the medium, yay :)
-	 				collisionsDetected.clear();
-	 				for (int j = 0; j < nodes.size(); j++) {
-	 					Node currentNode = nodes.get(j); 
-	 					if (currentTick == currentNode.pktGenerationTime) {
-		 						collisionsDetected.add(currentNode);		
-	 					}
-	 				}
-	 				
-	 				if (collisionsDetected.size() > 1) { //goddamnit, we got a collision :(
-	 					for (Node n : collisionsDetected) {
-							n.collisionCounter++;
-							n.pktGenerationTime = currentTick + n.calculateBEB();
-	 					}
-	 				}
-	 				else if (collisionsDetected.size() == 1) { //only 1 transmitter, life is good :)
-	 					
-	 					Node source = collisionsDetected.iterator().next();
-	 					
-	 					if (persistanceParam == 3) {
-	 						if (source.greaterThanP) { //this means we got lucky and are able to send, IN ADDITION, the medium is NOT BUSY ... YAY :)
-	 							
-			 					// create packet
-			 					Packet p = des.new Packet();
-			 					// send packet (ignore distance for now)
-			 					isMediumBusy = true;
-			 					source.transmissionRemaining = transmitTime;
-			 					transmitter = source; 
-			 					
-			 					//might need to make sure Math.random doesn't suck .. 
-			 					int receiver_id = ((int) (Math.random()) % compNum);
-			 					
-			 					double propogationTime = calculatePropogationTime(source.id, receiver_id);
-			 					
-			 					source.transmissionRemaining += propogationTime;
-
-								source.pktGenerationTime = 0;
-	 						}
-	 						else { // we either had to re-roll or have not rolled a probability yet 
-								double probability = Math.random() % 10;			 					
-			 					if (probability < PROBABILITY_LIMIT) {
-			 						//we got fucked by probability :(
-			 						source.collisionCounter++;
-									source.pktGenerationTime = currentTick + source.calculateBEB();
-			 					}
-			 					else {
-			 						source.greaterThanP = true;
-			 						//wait for next slot to send the packet
-			 					}
-	 						}
-	 					}
-	 					else {
-		 					// create packet
-		 					Packet p = des.new Packet();
-		 					// send packet (ignore distance for now)
-		 					isMediumBusy = true;
-		 					source.transmissionRemaining = transmitTime;
-		 					transmitter = source; 
-
-		 					//might need to make sure Math.random doesn't suck .. 
-		 					int receiver_id = ((int) (Math.random()) % compNum);
-		 					
-		 					double propogationTime = calculatePropogationTime(source.id, receiver_id);
-		 					
-		 					source.transmissionRemaining += propogationTime;
-		 					
-							source.pktGenerationTime = 0;
-	 					}
-	 				}
- 				}
- 				else if (isMediumBusy)
- 				{
-	 				//debug("Medium is busy");
- 					for (int j = 0; j< nodes.size(); j++)
- 					{
- 						Node currentNode = nodes.get(j);
- 						if(currentNode != transmitter && currentNode.pktGenerationTime == currentTick)
- 						{
- 							if(persistanceParam == 1)
- 							{
- 								currentNode.pktGenerationTime = currentTick + 1;
- 							}
- 							else if (persistanceParam == 2)
- 							{
- 								currentNode.pktGenerationTime = currentTick + Math.min(2, (int) (Math.random() % 10));
- 							}
- 							//TODO: FIX LOGIC
- 							else if (persistanceParam == 3)
- 							{
- 								//currentNode.pktGenerationTime += 1;
- 								for (Node n : nodes) {
- 									if (n.greaterThanP) {
- 										n.collisionCounter++;
- 										n.pktGenerationTime = currentTick + n.calculateBEB();
- 									}		
- 								}
- 							}
- 						}
- 					}
- 				}
- 				
- 				
- 			}
- 			debug("Number of packets successfully sent: " + pktsTransmittedSuccessfully);
+			System.out.println("The average is " + total/5);
  		}
  		else {
- 			debug("Not enough arguments! Enter DiscreteEventSimulator -usage");
+ 			System.out.println("Not enough arguments! Enter DiscreteEventSimulator -usage");
  		}
 	}
 
@@ -263,31 +297,4 @@ public class DiscreteEventSimulator {
 			System.out.println("DEBUG:	" + msg);
 		}
 	}
-
-
-	/*for (Node n : nodes) {
- 					if (n.waitDuration > 0) {
- 						n.waitDuration--;
- 					}
- 				}
- 				
- 				if (isMediumBusy && persistanceParam == 1) {
-	 				for (int j = 0; j < nodes.size(); j++) {
-	 					Node currentNode = nodes.get(j);
-	 					if (currentNode.pktGenerationTime > 0 && currentNode.pktGenerationTime > currentTick) { //never collided, hasn't detected busy before ...
-	 						currentNode.pktGenerationTime = currentTick + 1;
-	 					}
-	 				}
- 				}
- 				if (isMediumBusy && persistanceParam == 2) { //uh oh, the medium is busy! calculate random wait
-	 				for (int j = 0; j < nodes.size(); j++) {
-	 					Node currentNode = nodes.get(j);
-	 					if (currentNode.waitDuration == 0) { //never collided, hasn't detected busy before ...
-	 						currentNode.waitDuration = 	Math.min(2, (int) (Math.random() % 10)); //wait between 2 and 10
-	 					}
-	 				}
- 				}
- 				else if (isMediumBusy && persistanceParam == 3) { //uh oh, the medium is busy! calculate random wait
-	 				//????
- 				}*/
 }
