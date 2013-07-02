@@ -176,16 +176,22 @@ public class DiscreteEventSimulator {
 		 					// send packet (ignore distance for now)
 		 					isMediumBusy = true;
 		 					source.transmissionRemaining = transmitTime;
-		 					transmitter = source; 
 		 					
-		 					//Gnerate a number between 1 and 1000 and mod it by the number of computers
-		 					int receiver_id = ((int) (randomGenerator.nextInt(1000) + 1) % compNum);
+		 					int receiver_id;
+		 					
+		 					do
+		 					{
+		 						// Generate a random number between 1 and 100 and mod it by the number of computers
+		 						receiver_id = ((int) (randomGenerator.nextInt(100)) % compNum);
+		 					}while(source.id == receiver_id);
 		 					
 		 					double propogationTime = calculatePropogationTime(source.id, receiver_id);
 		 					
 		 					source.transmissionRemaining += propogationTime;
 
 							source.pktGenerationTime = 0;
+							
+							transmitter = source; 
  						}
  						else 
  						{
@@ -214,7 +220,6 @@ public class DiscreteEventSimulator {
 	 					// send packet (ignore distance for now)
 	 					isMediumBusy = true;
 	 					source.transmissionRemaining = transmitTime;
-	 					transmitter = source; 
 
 	 					int receiver_id;
 	 					
@@ -229,6 +234,8 @@ public class DiscreteEventSimulator {
 	 					source.transmissionRemaining += propogationTime;
 	 					
 						source.pktGenerationTime = 0;
+						
+	 					transmitter = source; 
  					}
  				}
 				}
