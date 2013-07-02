@@ -292,7 +292,7 @@ public class DiscreteEventSimulator {
 
 		int total = 0;
 		
-		for (int compNum = 20; compNum < 100; compNum += 20) {
+		for (int compNum = 20; compNum <= 100; compNum += 20) {
 			System.out.println("=============================================");
 			System.out.println("Number of nodes : " + compNum);
 			for (int pktArrivalRate = 5; pktArrivalRate <= 7; pktArrivalRate ++) {
