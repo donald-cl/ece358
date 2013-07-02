@@ -54,7 +54,7 @@ public class DiscreteEventSimulator {
 		int transmissionRemaining = 0;
 		int pktGenerationTime = 0;
 		int id = -1;
-		int collisionCounter = 0;
+		int collisionCounter = 1;
 		boolean greaterThanP = false;
 		public double probability = 0.0;
 		
@@ -153,7 +153,7 @@ public class DiscreteEventSimulator {
 						n.collisionCounter++;
 						if(n.collisionCounter == 11)
 						{
-							n.collisionCounter = 0;
+							n.collisionCounter = 1;
 						}
 						temp = "\t\tID: " + n.id + "\t Collision Counter:" + n.collisionCounter + "\tOld Packet Generation time:" + n.pktGenerationTime;
 						n.pktGenerationTime = currentTick + n.calculateBEB();
@@ -262,7 +262,7 @@ public class DiscreteEventSimulator {
 										n.collisionCounter++;
 										if(n.collisionCounter == 11)
 										{
-											n.collisionCounter = 0;
+											n.collisionCounter = 1;
 										}
 										n.pktGenerationTime = currentTick + n.calculateBEB();
 									}		
@@ -284,9 +284,38 @@ public class DiscreteEventSimulator {
 	private final static int NODE_DISTANCE = 10;
 	private final static double PROPAGATION_SPEED = 2.5E8;
 	
+	public static void simulate() {
+		
+		int lanSpeed = 1;
+		int pktLength = 1500;
+		int persistanceParam = 1;
+
+		int total = 0;
+		
+		for (int compNum = 20; compNum < 100; compNum += 20) {
+			System.out.println("=============================================");
+			System.out.println("Number of nodes : " + compNum);
+			for (int pktArrivalRate = 5; pktArrivalRate < 7; pktArrivalRate ++) {
+				System.out.println("Arrival Rate : " + pktArrivalRate);
+				for(int n = 0; n < 5; n++)
+				{
+					fails = 0;
+					isMediumBusy = false;
+					System.out.println("Test #" + n);
+					total = total + driver(compNum, pktArrivalRate, lanSpeed, pktLength, persistanceParam);
+				}
+				System.out.println("Number of nodes : " + compNum+ " -- Arrival rate : " + pktArrivalRate + " -- The average is " + total/5 +"\n");
+				System.out.println("=============================================\n");
+			}
+		}
+
+	}
+	
 	public static void main(String args[]) {
 		
-		if (args.length == 1 && args[0].equals("-usage")) {
+		simulate();
+		
+		/*if (args.length == 1 && args[0].equals("-usage")) {
 			debug("------------------------------------------------------------------------");
 			debug("Parameter description:");
 			debug("N: the number of computers connected to the LAN (variable)");
@@ -320,7 +349,7 @@ public class DiscreteEventSimulator {
  		}
  		else {
  			System.out.println("Not enough arguments! Enter DiscreteEventSimulator -usage");
- 		}
+ 		}*/
 	}
 
 	public static void debug(String msg) {
