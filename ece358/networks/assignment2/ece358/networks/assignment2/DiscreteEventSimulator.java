@@ -12,6 +12,8 @@ public class DiscreteEventSimulator {
 	public static int fails = 0;
 	public static Random randomGenerator = new Random();
 
+	public static DiscreteEventSimulator des = new DiscreteEventSimulator();
+	
 	class Packet {
 		public int generationTime;
 		public int serviceTime;
@@ -91,7 +93,6 @@ public class DiscreteEventSimulator {
 		System.out.println("Transmission time: " + transmitTime);
 		int pktsTransmittedSuccessfully = 0;
 		
-		DiscreteEventSimulator des = new DiscreteEventSimulator();
 		ArrayList<Node> nodes = new ArrayList<Node>();
 		HashSet<Node> collisionsDetected = new HashSet<Node>();
 		
@@ -127,7 +128,6 @@ public class DiscreteEventSimulator {
 				transmitter = null;
 				isMediumBusy = false;
 				pktsTransmittedSuccessfully++;
-				
 			}
 			/* END OF TRANSMISSION CHECK */
 						
@@ -153,7 +153,7 @@ public class DiscreteEventSimulator {
 						n.collisionCounter++;
 						if(n.collisionCounter == 11)
 						{
-							n.collisionCounter = 1;
+							n.collisionCounter = 0;
 						}
 						temp = "\t\tID: " + n.id + "\t Collision Counter:" + n.collisionCounter + "\tOld Packet Generation time:" + n.pktGenerationTime;
 						n.pktGenerationTime = currentTick + n.calculateBEB();
@@ -262,7 +262,7 @@ public class DiscreteEventSimulator {
 										n.collisionCounter++;
 										if(n.collisionCounter == 11)
 										{
-											n.collisionCounter = 1;
+											n.collisionCounter = 0;
 										}
 										n.pktGenerationTime = currentTick + n.calculateBEB();
 									}		
