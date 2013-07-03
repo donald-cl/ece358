@@ -284,7 +284,10 @@ public class DiscreteEventSimulator {
 			}
 			System.out.println("Number of packets successfully sent: " + pktsTransmittedSuccessfully);
 			System.out.println("Number of failed packets: " + fails);
-			System.out.println("Average packet delay: " + (totalDelay/pktsTransmittedSuccessfully));
+			if (pktsTransmittedSuccessfully != 0) {
+				System.out.println("Average packet delay: " + (totalDelay/pktsTransmittedSuccessfully));
+				
+			}
 			return pktsTransmittedSuccessfully;
 	}
 	
@@ -320,11 +323,10 @@ public class DiscreteEventSimulator {
 		}
 
 	}
-	public static void simulate2() {
-		
+	public static void simulate2() {		
 		int lanSpeed = 1;
 		int pktLength = 1500;
-		int persistanceParam = 3;
+		int persistanceParam = 1;
 
 		int total = 0;
 		
@@ -347,11 +349,82 @@ public class DiscreteEventSimulator {
 		}
 
 	}
+	public static void simulate3() {
+		
+		int lanSpeed = 1;
+		int pktLength = 1500;
+		int persistanceParam = 2;
+		int compNum = 30;
+		int pktArrivalRate = 1;
+		int total = 0;
+		
+		System.out.println("=============================================");
+		System.out.println("Number of nodes : " + compNum);
+		System.out.println("Arrival Rate : " + pktArrivalRate);
+		for (pktArrivalRate = 1; pktArrivalRate <= 10; pktArrivalRate++) {
+			System.out.println("Packet_Arrival_Rate: " + pktArrivalRate);
+			total = 0;
+			for(int n = 0; n < 5; n++)
+			{
+				fails = 0;
+				isMediumBusy = false;
+				System.out.println("Test #" + n);
+				total = total + driver(compNum, pktArrivalRate, lanSpeed, pktLength, persistanceParam);
+			}
+			System.out.println("Number of nodes : " + compNum+ " -- Arrival rate : " + pktArrivalRate + " -- The average is " + total/5 +"\n");
+			System.out.println("=============================================\n");	 
+		}
+		
+	}
+
+	public static void simulate4() {
+		int lanSpeed = 1;
+		int pktLength = 1500;
+		int persistanceParam = 3;
+		int compNum = 30;
+		int pktArrivalRate = 1;
+		int total = 0;		
+		System.out.println("=============================================");
+		System.out.println("Number of nodes : " + compNum);
+		total = 0;
+		ArrayList<Double> pValues = new ArrayList<Double>();
+		pValues.add(0.01);
+		pValues.add(0.1);
+		pValues.add(0.3);
+		pValues.add(0.6);
+		pValues.add(1.0);
+
+		
+		for (Double val : pValues) {
+			PROBABILITY_LIMIT = val;
+			System.out.println("============================================================");
+			System.out.println("P Value: " + val);
+			System.out.println("============================================================");
+
+			for (pktArrivalRate = 2; pktArrivalRate <= 10; pktArrivalRate+=2) {
+				System.out.println("Packet_Arrival_Rate: " + pktArrivalRate);
+				total = 0;
+				for(int n = 0; n < 5; n++)
+				{
+					fails = 0;
+					isMediumBusy = false;
+					System.out.println("Test #" + n);
+					total = total + driver(compNum, pktArrivalRate, lanSpeed, pktLength, persistanceParam);
+				}
+				System.out.println("Number of nodes : " + compNum+ " -- Arrival rate : " + pktArrivalRate + " -- The average is " + total/5 +"\n");
+				System.out.println("=============================================\n");	
+			}	
+		}
+	}
+
+
 	
 	public static void main(String args[]) {
 		
 		//simulate1();
-		simulate2();
+		//simulate2();
+		//simulate3();
+		simulate4();
 		
 		/*if (args.length == 1 && args[0].equals("-usage")) {
 			debug("------------------------------------------------------------------------");
